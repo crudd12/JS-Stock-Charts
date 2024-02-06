@@ -17,7 +17,7 @@ async function main() {
 
     const stocks = [GME, MSFT, DIS, BNTX];
 
-    stocks.forEach (stock => stock.values.reverse())
+    stocks.forEach(stock => stock.values.reverse())
 
     new Chart(timeChartCanvas.getContext('2d'), {
         type: 'line',
@@ -31,7 +31,6 @@ async function main() {
             }))
         }
     });
-
 
     function getColor(stock) {
         if (stock === "GME") {
@@ -48,8 +47,39 @@ async function main() {
         }
     }
 
+    new Chart(highestPriceChartCanvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: stocks.map(stock => stock.meta.symbol),
+            datasets: [{
+                label: 'Highest',
+                data: stocks.map(stock => getHighestValue(stock.values)),
+                backgroundColor: stocks.map(stock => getColor(stock.meta.symbol)),
+                borderColor: stocks.map(stock => getColor(stock.meta.symbol)),
+                borderWidth: 1
+            }],
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        }
+    });
 
+    function getHighestValue(stocks) {
+        let highestStockPrice = 0;
+        stocks.forEach((stock) => {
+            if (parseFloat(stock.high) > highestStockPrice) {
+                highestStockPrice = stock.high;
+            }
+        });
+        return highestStockPrice;
+    }
     console.log(stocks[0].values)
+    getHighestValue(stocks[0]);
 };
+
 
 main()
